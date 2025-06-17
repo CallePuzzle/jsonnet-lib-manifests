@@ -23,6 +23,12 @@ jobs:
       - name: Install deps
         run: jb install -q
 
+      - name: Install deps for testing
+        run: |
+          cd test
+          jb install -q
+          cd -
+
       - name: Format
         run: tk fmt .
 
