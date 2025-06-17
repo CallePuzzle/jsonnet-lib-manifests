@@ -2,34 +2,17 @@
   values:: {
     name: error 'name is required',
     projectName: error 'projectName is required',
+    path: 'manifests',
     destinationNamespace: error 'destinationNamespace is required',
     environment: error 'environment is required',
     repoURL: error 'repoURL is required',
     targetRevision: 'master',
     autoSync: true,
-    ignoreReplicas: true,
   },
 
   local autoSync = if $.values.autoSync then {
     syncPolicy: {
       automated: { prune: true },
-    },
-  } else {},
-
-  local ignoreReplicas = if $.values.ignoreReplicas then {
-    ignoreDifferences: [
-      {
-        group: 'apps',
-        kind: 'Deployment',
-        jsonPointers: [
-          '/spec/replicas',
-        ],
-      },
-    ],
-    syncPolicy+: {
-      syncOptions+: [
-        'RespectIgnoreDifferences=true',
-      ],
     },
   } else {},
 
@@ -46,12 +29,12 @@
     },
     project: $.values.projectName,
     source: {
-      path: '.',
+      path: $.values.path,
       plugin: {
         env: [
           {
             name: 'ENVIRONMENT',
-            value: $.values.environment + '/' + $.values.name,
+            value: $.values.environment,
           },
         ],
         name: 'tanka',
@@ -59,5 +42,5 @@
       repoURL: $.values.repoURL,
       targetRevision: $.values.targetRevision,
     },
-  } + autoSync + ignoreReplicas,
+  } + autoSync,
 }

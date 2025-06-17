@@ -10,7 +10,7 @@ local volumeMount = k.core.v1.volumeMount;
     tag: 'latest',
     pullPolicy: 'IfNotPresent',
     args: null,
-    port: error 'port not set',
+    port: null,
     portName: 'http',
     env: {},
     envFrom: [],
@@ -18,27 +18,17 @@ local volumeMount = k.core.v1.volumeMount;
     readinessProbe: null,
     livenessProbe: null,
     startupProbe: null,
-    requestCpu: null,
-    requestMemory: null,
-    // Se añade un theshold en la memoria porque este valor típicamente también se usa como límite de la aplicación y hay que tener un margen para el resto de procesos del contenedor
-    requestMemoryThr: 1.1,  //110%
+    requestCpu: error 'requestCpu not set',
+    requestMemory: error 'requestMemory not set',
     limitCpu: null,
     limitMemory: self.requestMemory,
-    limitMemoryThr: 1.2,  //120%
-    userId: null,
-    volumes: [],
-    /* campos que puede tener el objecto volumes
-    {
-      name: error 'name not set',
-      mountPath: error 'mountPath not set',
-    }
-    */
+    userId: error 'userId not set',
     containerMixin: {},
   },
 
   local _cpu(cpu) = if cpu != null then { cpu: cpu } else {},
-  local _memory(memory, memoryThr) = if memory != null then { memory: std.round(memory * memoryThr) + 'Mi' } else {},
-  local resource(cpu, memory, memoryThr) = _cpu(cpu) + _memory(memory, memoryThr),
+  local _memory(memory) = if memory != null then { memory: memory } else {},
+  local resource(cpu, memory) = _cpu(cpu) + _memory(memory),
 
   local securityContext = if $.values.userId != null then
     container.securityContext.withRunAsUser($.values.userId)
@@ -61,9 +51,8 @@ local volumeMount = k.core.v1.volumeMount;
 
   this: container.new($.values.name, $.values.image + ':' + $.values.tag)
         + _port
-        + container.resources.withLimits(resource($.values.limitCpu, $.values.limitMemory, $.values.limitMemoryThr))
-        + container.resources.withRequests(resource($.values.requestCpu, $.values.requestMemory, $.values.requestMemoryThr))
-        //+ container.securityContext.withPrivileged(false)
+        + container.resources.withLimits(resource($.values.limitCpu, $.values.limitMemory))
+        + container.resources.withRequests(resource($.values.requestCpu, $.values.requestMemory))
         + securityContext
         + { readinessProbe: $.values.readinessProbe }
         + { livenessProbe: $.values.livenessProbe }
@@ -73,6 +62,5 @@ local volumeMount = k.core.v1.volumeMount;
         + container.withEnvFrom($.values.envFrom)
         + command
         + args
-        + volumes
         + $.values.containerMixin,
 }

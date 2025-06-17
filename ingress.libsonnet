@@ -17,7 +17,7 @@ local ingress = k.networking.v1.ingress;
   ],
 
   this: ingress.new(name=name)
-        + ingress.metadata.withLabels($.values.labels)
+        + ingress.metadata.withLabels({ app: $.values.name } + $.values.labels)
         + ingress.spec.withRules(rules)
         + ingress.spec.withIngressClassName('nginx'),
 }

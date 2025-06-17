@@ -7,7 +7,7 @@ local service = k.core.v1.service;
 
   local _service = if $.values.port != null then {
     service: k.util.serviceFor(self.workload)
-             + service.metadata.withLabels({ app: $.values.name }),
+             + service.metadata.withLabels({ app: $.values.name } + $.values.labels),
   } else {},
 
   app: {
