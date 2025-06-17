@@ -1,7 +1,6 @@
 local k = import 'k.libsonnet';
 local container = k.core.v1.container;
 local port = k.core.v1.containerPort;
-local volumeMount = k.core.v1.volumeMount;
 
 {
   values:: {
