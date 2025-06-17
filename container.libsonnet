@@ -43,12 +43,6 @@ local volumeMount = k.core.v1.volumeMount;
 
   local _port = if $.values.port != null then container.withPorts([port.newNamed($.values.port, $.values.portName)]) else {},
 
-  local _volumeMount(fields) = volumeMount.withName(fields.name)
-                               + volumeMount.withMountPath(fields.mountPath)
-                               + if std.objectHas(fields, 'subPath') then volumeMount.withSubPath(fields.subPath) else {},
-  local volumes = if std.length($.values.volumes) > 0 then
-    container.withVolumeMountsMixin([_volumeMount(volume) for volume in $.values.volumes]) else {},
-
   this: container.new($.values.name, $.values.image + ':' + $.values.tag)
         + _port
         + container.resources.withLimits(resource($.values.limitCpu, $.values.limitMemory))

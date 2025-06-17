@@ -1,0 +1,42 @@
+name: "test"
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Grafana Tanka
+        uses: unfunco/setup-tanka@v1
+        with:
+          tanka-version: 0.26.0
+
+      - name: Setup Jsonnet
+        uses: kobtea/setup-jsonnet-action@v2
+
+      - name: Install deps
+        run: jb install -q
+
+      - name: Format
+        run: tk fmt .
+
+      - name: Lint
+        run: tk lint .
+
+      - name: Test argocd app
+        run: |
+          cd test
+          tk show argocd-app
+          cd -
+
+      - name: Test example app
+        run: |
+          cd test
+          tk show svelte-template/
+          cd -
