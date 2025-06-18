@@ -7,7 +7,9 @@
   labels: {
     owner: 'callepuzzle',
   },
-  annotations: {},
+  annotations: {
+    'argocd.argoproj.io/sync-wave': '50',
+  },
   podAnnotations: {},
   tag: 'latest',
   port: error 'port not set',
