@@ -23,10 +23,6 @@ jobs:
       - name: Install deps
         run: jb install -q
 
-      - name: Install deps for testing
-        run: jb install -q
-        working-directory: ./test
-
       - name: Format
         run: tk fmt .
 
@@ -34,9 +30,7 @@ jobs:
         run: tk lint .
 
       - name: Test argocd app
-        run: tk show argocd-app
-        working-directory: ./test
+        run: tk show test/argocd-app --dangerous-allow-redirect
 
       - name: Test example app
-        run: tk show svelte-template/
-        working-directory: ./test
+        run: tk show test/svelte-template --dangerous-allow-redirect
