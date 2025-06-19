@@ -8,11 +8,20 @@
     repoURL: error 'repoURL is required',
     targetRevision: 'master',
     autoSync: true,
+    createNamespace: true,
   },
 
   local autoSync = if $.values.autoSync then {
     syncPolicy: {
       automated: { prune: true },
+    },
+  } else {},
+
+  local createNamespace = if $.values.createNamespace then {
+    syncPolicy+: {
+      syncOptions+: [
+        'CreateNamespace=true',
+      ],
     },
   } else {},
 
@@ -42,5 +51,5 @@
       repoURL: $.values.repoURL,
       targetRevision: $.values.targetRevision,
     },
-  } + autoSync,
+  } + autoSync + createNamespace,
 }
