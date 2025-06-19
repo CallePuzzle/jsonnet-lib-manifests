@@ -1,6 +1,7 @@
 {
   values:: {
     name: error 'name is required',
+    namespace: 'argocd',
     projectName: error 'projectName is required',
     path: 'manifests',
     destinationNamespace: error 'destinationNamespace is required',
@@ -29,7 +30,7 @@
   kind: 'Application',
   metadata: {
     name: $.values.name + '-' + $.values.projectName,
-    namespace: 'argocd',
+    namespace: $.values.namespace,
   },
   spec: {
     destination: {
