@@ -47,7 +47,7 @@
             value: $.values.environment,
           },
         ],
-        name: 'tanka',
+        name: 'tanka-sops',
       },
       repoURL: $.values.repoURL,
       targetRevision: $.values.targetRevision,

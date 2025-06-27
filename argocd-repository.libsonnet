@@ -26,7 +26,7 @@ local secret = k.core.v1.secret;
     {
       url: $.values.repositoryUrl,
     },
-  repository: secret.new('argocd-repository', {}) +
+  repository: secret.new($.values.name + '-argocd-repository', {}) +
               secret.metadata.withNamespace($.values.namespace) +
               secret.metadata.withLabels({
                 'argocd.argoproj.io/secret-type': 'repository',
