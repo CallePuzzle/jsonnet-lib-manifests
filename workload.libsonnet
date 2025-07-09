@@ -27,5 +27,6 @@ local utils = import 'utils.libsonnet';
         + deployment.spec.template.spec.securityContext.withFsGroup($.values.userId)
         + deployment.spec.template.spec.securityContext.withRunAsUser($.values.userId)
         + deployment.spec.template.spec.withImagePullSecrets($.values.pullSecret)
+        + deployment.spec.template.spec.withInitContainers($._config.containersInit)
         + $.values.deploymentMixin,
 }

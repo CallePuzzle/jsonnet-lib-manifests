@@ -21,6 +21,7 @@
   hpaMinReplicas: 1,
   hpaMaxReplicas: self.hpaMinReplicas,
   hpaCpuPercent: 50,
+  containersInit: [],
   containerMixin: {},
   deploymentMixin: {},
   serverAlias: error 'serverAlias not set',
