@@ -3,11 +3,14 @@
     name: error 'name is required',
     namespace: 'argocd',
     projectName: error 'projectName is required',
-    path: 'manifests',
+    path: null,
     destinationNamespace: error 'destinationNamespace is required',
-    environment: error 'environment is required',
     repoURL: error 'repoURL is required',
     targetRevision: 'master',
+    chart: if self.path == null then error 'chart is required',
+    chartReleaseName: '',
+    chartValues: null,
+    plugin: null,
     autoSync: true,
     createNamespace: true,
   },
@@ -40,17 +43,13 @@
     project: $.values.projectName,
     source: {
       path: $.values.path,
-      plugin: {
-        env: [
-          {
-            name: 'ENVIRONMENT',
-            value: $.values.environment,
-          },
-        ],
-        name: 'tanka-sops',
-      },
+      plugin: $.values.plugin,
       repoURL: $.values.repoURL,
       targetRevision: $.values.targetRevision,
-    },
+      chart: $.values.chart,
+    } + if $.values.chartValues != null then { helm: {
+      //This regex filter spaces before line-break's, so tkdiff shows a correct diff
+      values: std.native('regexSubst')('(?m)[ ]+$', $.values.chartValues, ''),
+    } } else {} + if $.values.chartReleaseName != '' then { releaseName: $.values.chartReleaseName } else {},
   } + autoSync + createNamespace,
 }
