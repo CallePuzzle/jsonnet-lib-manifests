@@ -7,12 +7,16 @@ local service = k.core.v1.service;
 
   local _service = if $.values.port != null then {
     service: k.util.serviceFor(self.workload)
+             + service.metadata.withNamespace($.values.namespace)
              + service.metadata.withLabels({ app: $.values.name } + $.values.labels),
+  } else {},
+
+  local _ingress = if $.values.serverAlias != null && $.values.port != null then {
+    ingress: ((import 'ingress.libsonnet') + { values+: $.values }).this,
   } else {},
 
   app: {
     workload: ((import 'workload.libsonnet') + { values+: $.values }).this,
     hpa: ((import 'workload-extra.libsonnet') + { values+: $.values }).hpa,
-    ingress: ((import 'ingress.libsonnet') + { values+: $.values }).this,
-  } + _service,
+  } + _service + _ingress,
 }

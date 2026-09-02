@@ -21,7 +21,7 @@ local port = k.core.v1.containerPort;
     requestMemory: error 'requestMemory not set',
     limitCpu: null,
     limitMemory: self.requestMemory,
-    userId: error 'userId not set',
+    userId: null,
     containerMixin: {},
   },
 
@@ -42,17 +42,23 @@ local port = k.core.v1.containerPort;
 
   local _port = if $.values.port != null then container.withPorts([port.newNamed($.values.port, $.values.portName)]) else {},
 
+  local _probes =
+    (if $.values.readinessProbe != null then { readinessProbe: $.values.readinessProbe } else {})
+    + (if $.values.livenessProbe != null then { livenessProbe: $.values.livenessProbe } else {})
+    + (if $.values.startupProbe != null then { startupProbe: $.values.startupProbe } else {}),
+
+  local _env = if std.length($.values.env) > 0 then container.withEnvMap($.values.env) else {},
+  local _envFrom = if std.length($.values.envFrom) > 0 then container.withEnvFrom($.values.envFrom) else {},
+
   this: container.new($.values.name, $.values.image + ':' + $.values.tag)
         + _port
         + container.resources.withLimits(resource($.values.limitCpu, $.values.limitMemory))
         + container.resources.withRequests(resource($.values.requestCpu, $.values.requestMemory))
         + securityContext
-        + { readinessProbe: $.values.readinessProbe }
-        + { livenessProbe: $.values.livenessProbe }
-        + { startupProbe: $.values.startupProbe }
+        + _probes
         + container.withImagePullPolicy($.values.pullPolicy)
-        + container.withEnvMap($.values.env)
-        + container.withEnvFrom($.values.envFrom)
+        + _env
+        + _envFrom
         + command
         + args
         + $.values.containerMixin,

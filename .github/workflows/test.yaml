@@ -34,3 +34,9 @@ jobs:
 
       - name: Test example app
         run: tk show test/svelte-template --dangerous-allow-redirect
+
+      - name: Test secret-stringData
+        run: tk show test/secret-stringData --dangerous-allow-redirect
+
+      - name: Test svelte-minimal (no port / no ingress / no hpa)
+        run: tk show test/svelte-minimal --dangerous-allow-redirect

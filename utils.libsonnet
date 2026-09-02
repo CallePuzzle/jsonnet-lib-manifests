@@ -1,3 +1,4 @@
 {
-  hasHpa: function(hpaMinReplicas, hpaMaxReplicas) if hpaMinReplicas >= 1 && hpaMaxReplicas > 1 && hpaMinReplicas != hpaMaxReplicas then true else false,
+  hasHpa(hpaMinReplicas, hpaMaxReplicas)::
+    hpaMinReplicas >= 0 && hpaMaxReplicas > 0 && hpaMinReplicas != hpaMaxReplicas,
 }
