@@ -1,0 +1,42 @@
+name: "test"
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Grafana Tanka
+        uses: unfunco/setup-tanka@1.0.0-alpha.1
+        with:
+          tanka-version: 0.26.0
+
+      - name: Setup Jsonnet
+        uses: kobtea/setup-jsonnet-action@v2
+
+      - name: Install deps
+        run: jb install -q
+
+      - name: Format
+        run: tk fmt .
+
+      - name: Lint
+        run: tk lint .
+
+      - name: Test argocd app
+        run: tk show test/argocd-app --dangerous-allow-redirect
+
+      - name: Test example app
+        run: tk show test/svelte-template --dangerous-allow-redirect
+
+      - name: Test secret-stringData
+        run: tk show test/secret-stringData --dangerous-allow-redirect
+
+      - name: Test svelte-minimal (no port / no ingress / no hpa)
+        run: tk show test/svelte-minimal --dangerous-allow-redirect
